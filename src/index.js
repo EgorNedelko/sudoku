@@ -1,11 +1,13 @@
-module.exports = function solveSudoku(board) {
+module.exports = function solveSudoku(matrix) {
+	//Regulate the size of the matrix
 	const size = 9
 	const boxSize = 3
 
-	const findEmpty = (board) => {
+	//Find 'no value' element => [row, col] || null
+	const findEmpty = (matrix) => {
 		for (let r = 0; r < size; r++) {
 			for (let c = 0; c < size; c++) {
-				if (board[r][c] === 0) {
+				if (matrix[r][c] === 0) {
 					return [r, c]
 				}
 			}
@@ -13,19 +15,20 @@ module.exports = function solveSudoku(board) {
 		return null
 	}
 
-	const validate = (num, pos, board) => {
+	//Check whether current number being inserted at the current position will allow further solving the board 
+	const validate = (num, pos, matrix) => {
 		const [r, c] = pos
 
 		//Check rows
 		for (let i = 0; i < size; i++) {
-			if (board[i][c] === num && i !== r) {
+			if (matrix[i][c] === num && i !== r) {
 				return false
 			}
 		}
 
 		//Check cols
 		for (let i = 0; i < size; i++) {
-			if (board[r][i] === num && i !== c) {
+			if (matrix[r][i] === num && i !== c) {
 				return false
 			}
 		}
@@ -36,7 +39,7 @@ module.exports = function solveSudoku(board) {
 
 		for (let i = boxRow; i < boxRow + boxSize; i++) {
 			for (let j = boxCol; j < boxCol + boxSize; j++) {
-				if (board[i][j] === num && i !== r && j !== c) {
+				if (matrix[i][j] === num && i !== r && j !== c) {
 					return false
 				}
 			}
@@ -45,8 +48,9 @@ module.exports = function solveSudoku(board) {
 		return true
 	}
 
+	//Main function
 	const solve = () => {
-		const currPos = findEmpty(board)
+		const currPos = findEmpty(matrix)
 
 		if (currPos === null) {
 			return true
@@ -54,18 +58,19 @@ module.exports = function solveSudoku(board) {
 
 		for (let i = 1; i < size + 1; i++) {
 			const currNum = i
-			const isValid = validate(currNum, currPos, board)
+			const isValid = validate(currNum, currPos, matrix)
 		
 
 			if (isValid) {
 				const [x, y] = currPos
-				board[x][y] = currNum
+				matrix[x][y] = currNum
 
+				//Recursion
 				if (solve()) {
 					return true
 				}
 
-				board[x][y] = 0
+				matrix[x][y] = 0
 			}
 		}
 
@@ -73,5 +78,5 @@ module.exports = function solveSudoku(board) {
 	}
 
 	solve()
-	return board
+	return matrix
 }
